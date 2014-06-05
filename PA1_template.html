@@ -5,7 +5,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <meta http-equiv="x-ua-compatible" content="IE=9" >
 
-<title>Peer Assessment 1 for course &ldquo;Reproducible Research&rdquo;</title>
+<title>Reproducible Research: Peer Assessment 1</title>
 
 <style type="text/css">
 body, td {
@@ -179,7 +179,9 @@ hljs.initHighlightingOnLoad();
 </head>
 
 <body>
-<h1>Peer Assessment 1 for course &ldquo;Reproducible Research&rdquo;</h1>
+<h1>Reproducible Research: Peer Assessment 1</h1>
+
+<h2>Loading and preprocessing the data</h2>
 
 <p>Load data from CSV file:</p>
 
@@ -190,6 +192,8 @@ hljs.initHighlightingOnLoad();
 
 <pre><code class="r">data$date &lt;- as.Date(strptime(data$date, format=&quot;%Y-%m-%d&quot;))
 </code></pre>
+
+<h2>What is mean total number of steps taken per day?</h2>
 
 <p>Analysis of mean total number of steps taken per day, for this we omit
 incomplete measurements:</p>
@@ -225,6 +229,8 @@ colnames(daily.steps) &lt;- col.names
 <pre><code>## [1] &quot;Median value of total number of steps per day: 10765&quot;
 </code></pre>
 
+<h2>What is the average daily activity pattern?</h2>
+
 <p>Calculate average number of steps taken per 5-minute interval:</p>
 
 <pre><code class="r">interval.avg &lt;- aggregate(comp.data$steps,list(comp.data$interval),FUN=mean,na.omit=TRUE)
@@ -248,6 +254,8 @@ paste(&quot;Index of interval with maximum steps (daily average):&quot;,max.int$
 <pre><code>## [1] &quot;Index of interval with maximum steps (daily average): 104&quot;
 </code></pre>
 
+<h2>Imputing missing values</h2>
+
 <p>Calculate total number of rows with missing values:</p>
 
 <pre><code class="r">paste(&quot;Number of rows with missing values:&quot;,nrow(data)-nrow(comp.data))
@@ -255,6 +263,8 @@ paste(&quot;Index of interval with maximum steps (daily average):&quot;,max.int$
 
 <pre><code>## [1] &quot;Number of rows with missing values: 2304&quot;
 </code></pre>
+
+<h2>Are there differences in activity patterns between weekdays and weekends?</h2>
 
 </body>
 
