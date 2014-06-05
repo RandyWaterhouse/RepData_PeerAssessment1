@@ -34,8 +34,8 @@ hist(daily.steps$total.steps,breaks=10,col="red",main="total number of steps per
 
 Calculate mean and median of total number of steps per day:
 ```{r calc.mean.median}
-paste("Mean value of total number of steps per day:",format(mean(daily.steps$total.steps),digits=5))
-paste("Median value of total number of steps per day:",median(daily.steps$total.steps))
+paste("Mean value of total number of steps per day:",as.integer(mean(daily.steps$total.steps)))
+paste("Median value of total number of steps per day:",as.integer(median(daily.steps$total.steps)))
 ```
 
 ## What is the average daily activity pattern?
@@ -65,6 +65,57 @@ Calculate total number of rows with missing values:
 paste("Number of rows with missing values:",nrow(data)-nrow(comp.data))
 ```
 
+Replace missing values with average (mean) values for the corresponding
+5-minute interval; new data set "mod.data" is equal to original dataset
+but with missing data filled in:
+```{r replace.na}
+filled.data <- data
+for(i in 1:nrow(data)){
+    if(is.na(filled.data[i,1])){
+        filled.data[i,1] <- interval.avg[filled.data[i,3]==interval.avg$interval.no,2]
+    }
+}
+```
 
-## Are there differences in activity patterns between weekdays and weekends?
+Calculate number of steps per day for filled-in data and assign meaning variables names:
+```{r calc.daily.steps.filled}
+daily.steps.filled <- aggregate(filled.data$steps,list(filled.data$date),FUN=sum)
+col.names <- c("date","total.steps")
+colnames(daily.steps.filled) <- col.names
+```
 
+Plot total number of steps per day for filled-in data:
+```{r fig.width=10, fig.height=6}
+hist(daily.steps.filled$total.steps,breaks=10,col="red",main="total number of steps per day for filled data",xlab="number of steps per day",ylab="frequency")
+```
+
+Calculate mean and median of total number of steps per day for filled data:
+```{r calc.mean.median.filled}
+paste("Mean value of total number of steps per day:",as.integer(mean(daily.steps.filled$total.steps)))
+paste("Median value of total number of steps per day:",as.integer(median(daily.steps.filled$total.steps)))
+```
+
+There appears to be no significant difference in compared to the
+first part of the assignment.
+
+## Are there differences in activity patterns between weekdays and
+weekends?
+
+Add column indicating whether a given date is a weekend day:
+```{r check.weekends}
+filled.data$is.weekend <- factor(as.POSIXlt(filled.data[,2])$wday %in% c(0,6), levels=c("TRUE","FALSE"),labels=c("weekend","weekday"))
+```
+
+Calculate average number of steps taken per 5-minute interval for filled data:
+```{r interval.averages.filled}
+interval.avg.filled <- aggregate(filled.data$steps,list(filled.data$interval,filled.data$is.weekend),FUN=mean,na.omit=TRUE)
+col.names <- c("interval.no","weekend.indicator","avg.steps")
+colnames(interval.avg.filled) <- col.names
+head(interval.avg.filled)
+```
+
+Create panel plot using lattice plotting system:
+```{r fig.width=10, fig.height=6}
+library(lattice)
+xyplot(interval.avg.filled$avg.steps ~ interval.avg.filled$interval.no | interval.avg.filled$weekend.indicator,xlab="interval number",ylab="average number of steps per 5-minute interval",layout=c(1,2),type="l")
+```
